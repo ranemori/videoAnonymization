@@ -182,6 +182,10 @@ class AdaptiveTemporalFilter:
         previous = self.previous_frame
         
         # Calculer la différence entre frames (mouvement)
+        if current.dtype != previous.dtype:
+            current = current.astype(np.float32)
+            previous = previous.astype(np.float32)
+
         diff = cv2.absdiff(current, previous)
         motion_magnitude = cv2.cvtColor(diff.astype(np.uint8), cv2.COLOR_BGR2GRAY)
         
