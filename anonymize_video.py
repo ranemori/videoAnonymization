@@ -93,6 +93,11 @@ def anonymize_video(input_path, output_path, face_dataset_path=None, mode='swap'
     frame_count = 0
     blur_mode = (mode == 'blur')
     
+    # Créer fenêtre pour affichage en temps réel
+    window_name = "Anonymisation en cours (Appuyez sur 'q' pour arrêter)"
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.resizeWindow(window_name, 960, 540)  # Taille fenêtre confortable
+    
     with tqdm(total=total_frames, desc="Traitement des frames") as pbar:
         while True:
             ret, frame = cap.read()
@@ -119,11 +124,22 @@ def anonymize_video(input_path, output_path, face_dataset_path=None, mode='swap'
             if enable_analysis:
                 original_frames.append(frame.copy())
             
+            # Afficher la frame traitée en temps réel
+            cv2.imshow(window_name, processed_frame)
+            
+            # Permettre d'arrêter avec 'q' (attente de 1ms)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                print("\n Traitement interrompu par l'utilisateur")
+                break
+            
             # Écrire la frame traitée
             out.write(processed_frame)
             
             frame_count += 1
             pbar.update(1)
+    
+    # Fermer la fenêtre d'aperçu
+    cv2.destroyAllWindows()
     
     # Libérer les ressources
     cap.release()
