@@ -1,19 +1,26 @@
 # Modèles et fichiers volumineux
-models/
+models/*
+!models/.gitkeep
 *.onnx
 *.pth
 *.pt
 
-# Vidéos
-input_videos/
-output_videos/
+# Vidéos (ignorer le contenu mais pas les dossiers)
+input_videos/*
+!input_videos/.gitkeep
+!input_videos/README.md
+output_videos/*
+!output_videos/.gitkeep
+!output_videos/README.md
 *.mp4
 *.avi
 *.mov
 *.mkv
 
-# Dataset de visages (peut être volumineux)
-face_dataset/
+# Dataset de visages (ignorer le contenu mais pas le dossier)
+face_dataset/*
+!face_dataset/.gitkeep
+!face_dataset/README.md
 *.jpg
 *.jpeg
 *.png
