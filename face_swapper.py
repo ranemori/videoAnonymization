@@ -157,7 +157,7 @@ class FaceSwapper:
     
     def swap_faces(self, frame, blur_mode=False):
         """
-        Remplace les visages dans une frame
+        Remplace les visages dans une frame avec préservation des expressions
         Chaque personne garde le même visage de remplacement
         
         Args:
@@ -174,6 +174,7 @@ class FaceSwapper:
             return frame
         
         result = frame.copy()
+        original = frame.copy()  # Garder l'original pour blending expressions
         
         for face in faces:
             if blur_mode:
@@ -184,12 +185,112 @@ class FaceSwapper:
                 # Utiliser l'embedding du visage pour identifier la personne
                 replacement_face = self.get_face_for_person(face.embedding)
                 if replacement_face is not None:
+                    # Swap de base
                     result = self.swapper.get(result, face, replacement_face, paste_back=True)
+                    
+                    # AMÉLIORATION: Préserver zones d'expression (bouche, yeux)
+                    result = self.preserve_expression_zones(original, result, face)
                 else:
                     # Si pas de visage de remplacement, flouter
                     result = self.blur_face(result, face)
         
         return result
+    
+    def preserve_expression_zones(self, original, swapped, face, blend_ratio=0.25):
+        """
+        Préserve les zones d'expression (bouche, yeux) de l'original
+        pour rendre le swap plus fluide et naturel
+        
+        Args:
+            original: Frame originale avec vraies expressions
+            swapped: Frame après swap
+            face: Objet face avec landmarks
+            blend_ratio: Intensité du blending (0-1), 0.25 = 25% original
+            
+        Returns:
+            Frame avec expressions préservées
+        """
+        # Vérifier si landmarks disponibles
+        if not hasattr(face, 'kps') or face.kps is None:
+            return swapped
+        
+        landmarks = face.kps.astype(int)
+        
+        # Créer masques pour zones d'expression
+        mouth_mask = self._create_mouth_mask(swapped.shape[:2], landmarks)
+        eyes_mask = self._create_eyes_mask(swapped.shape[:2], landmarks)
+        
+        # Combiner masques
+        combined_mask = np.maximum(mouth_mask, eyes_mask)
+        combined_mask = np.stack([combined_mask] * 3, axis=-1)  # 3 canaux RGB
+        
+        # Blending: mélanger original et swapped dans zones d'expression
+        result = swapped.astype(np.float32)
+        original_float = original.astype(np.float32)
+        
+        result = (1 - combined_mask * blend_ratio) * result + \
+                 (combined_mask * blend_ratio) * original_float
+        
+        return result.astype(np.uint8)
+    
+    def _create_mouth_mask(self, shape, landmarks):
+        """
+        Crée un masque pour la zone de la bouche
+        
+        Args:
+            shape: Dimensions de l'image (height, width)
+            landmarks: Points faciaux (5 points InsightFace)
+                      [left_eye, right_eye, nose, left_mouth, right_mouth]
+        
+        Returns:
+            Masque float [0-1] pour zone bouche
+        """
+        # Points bouche: indices 3 et 4
+        mouth_left = landmarks[3]
+        mouth_right = landmarks[4]
+        mouth_center = ((mouth_left + mouth_right) / 2).astype(int)
+        
+        # Rayon dynamique basé sur largeur bouche
+        mouth_width = np.linalg.norm(mouth_right - mouth_left)
+        radius = int(mouth_width * 1.2)  # Zone élargie pour inclure lèvres
+        
+        # Créer masque circulaire
+        mask = np.zeros(shape, dtype=np.float32)
+        cv2.circle(mask, tuple(mouth_center), radius, 1.0, -1)
+        
+        # Flou gaussien pour transition douce
+        mask = cv2.GaussianBlur(mask, (0, 0), sigmaX=radius*0.3)
+        
+        return mask
+    
+    def _create_eyes_mask(self, shape, landmarks):
+        """
+        Crée un masque pour les zones des yeux
+        
+        Args:
+            shape: Dimensions de l'image (height, width)
+            landmarks: Points faciaux (5 points InsightFace)
+        
+        Returns:
+            Masque float [0-1] pour zones yeux
+        """
+        # Points yeux: indices 0 et 1
+        left_eye = landmarks[0].astype(int)
+        right_eye = landmarks[1].astype(int)
+        
+        # Rayon basé sur distance entre yeux
+        eye_distance = np.linalg.norm(right_eye - left_eye)
+        radius = int(eye_distance * 0.35)
+        
+        # Créer masque avec deux cercles
+        mask = np.zeros(shape, dtype=np.float32)
+        cv2.circle(mask, tuple(left_eye), radius, 1.0, -1)
+        cv2.circle(mask, tuple(right_eye), radius, 1.0, -1)
+        
+        # Flou gaussien pour transition douce
+        mask = cv2.GaussianBlur(mask, (0, 0), sigmaX=radius*0.4)
+        
+        return mask
     
     def blur_face(self, frame, face):
         """Floute un visage dans la frame"""
