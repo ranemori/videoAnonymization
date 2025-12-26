@@ -2,7 +2,7 @@
 
 ## Résumé Exécutif
 
-Ce document détaille les contraintes techniques rencontrées lors de l'implémentation de l'anonymisation des vêtements dans le projet videoPrivacy, ainsi que les solutions potentielles utilisant des technologies avancées et l'accélération GPU CUDA.
+Ce document détaille les contraintes techniques rencontrées lors de l'implémentation de l'anonymisation des vêtements dans le projet videoPrivacy pour ca on n'a pas l'utiliser , ainsi que les solutions potentielles utilisant des technologies avancées et l'accélération GPU CUDA.
 
 ---
 
