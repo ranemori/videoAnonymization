@@ -1,0 +1,42 @@
+# Modèles et fichiers volumineux
+models/
+*.onnx
+*.pth
+*.pt
+
+# Vidéos
+input_videos/
+output_videos/
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Dataset de visages (peut être volumineux)
+face_dataset/
+*.jpg
+*.jpeg
+*.png
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Anaconda
+.conda/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

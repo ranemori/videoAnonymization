@@ -1,0 +1,16 @@
+name: video-anonymization
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+    - insightface==0.7.3
+    - onnxruntime-gpu
+    - opencv-python
+    - numpy
+    - tqdm
+    - pillow
+    - scikit-image
+    - gdown
+    - matplotlib

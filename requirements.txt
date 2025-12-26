@@ -1,0 +1,16 @@
+insightface==0.7.3
+onnxruntime-gpu
+opencv-python
+numpy
+tqdm
+pillow
+scikit-image
+gdown
+matplotlib
+
+# Virtual Try-On dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+mediapipe>=0.10.0
+scipy
+tensorboard
