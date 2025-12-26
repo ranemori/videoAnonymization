@@ -166,6 +166,7 @@ def anonymize_video(input_path, output_path, face_dataset_path=None, mode='swap'
     print("=" * 60)
     
     # Créer une vidéo d'analyse si demandé
+    analysis_path = None
     if enable_analysis and len(original_frames) > 0:
         print("\n Création de la vidéo d'analyse...")
         analysis_path = str(Path(output_path).parent / (Path(output_path).stem + '_analysis.mp4'))
@@ -222,6 +223,32 @@ def anonymize_video(input_path, output_path, face_dataset_path=None, mode='swap'
             # Restaurer le fichier original si échec
             shutil.move(temp_video, output_path)
             print("  Échec de l'anonymisation audio, vidéo sauvegardée sans modification audio")
+    
+    # Ouvrir automatiquement les vidéos après traitement
+    print("\n" + "=" * 60)
+    print(" OUVERTURE DES VIDÉOS")
+    print("=" * 60)
+    
+    try:
+        import os
+        
+        # Ouvrir la vidéo anonymisée
+        print(f" Ouverture de la vidéo: {output_path}")
+        os.startfile(output_path)
+        
+        # Ouvrir la vidéo d'analyse si elle existe
+        if analysis_path and Path(analysis_path).exists():
+            import time
+            time.sleep(1)  # Petit délai pour éviter d'ouvrir tout en même temps
+            print(f" Ouverture de l'analyse: {analysis_path}")
+            os.startfile(analysis_path)
+    
+    except Exception as e:
+        print(f" Impossible d'ouvrir automatiquement les vidéos: {e}")
+        print(f" Vous pouvez ouvrir manuellement:")
+        print(f"   - Vidéo: {output_path}")
+        if analysis_path:
+            print(f"   - Analyse: {analysis_path}")
 
 def main():
     parser = argparse.ArgumentParser(
