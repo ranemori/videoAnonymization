@@ -138,20 +138,6 @@ python anonymize_video.py --input input_videos/video.mp4 --output output_videos/
 
 **3. pixelate** - Pixelisation des visages
 ```powershell
-pythoModes de base
-
-**1. swap** - Remplacement de visage uniquement
-```powershell
-python anonymize_video.py --input input_videos/video.mp4 --output output_videos/face_swap.mp4 --mode swap
-```
-
-**2. blur** - Flou gaussien sur visages
-```powershell
-python anonymize_video.py --input input_videos/video.mp4 --output output_videos/blur.mp4 --mode blur
-```
-
-**3. pixelate** - Pixelisation des visages
-```powershell
 python anonymize_video.py --input input_videos/video.mp4 --output output_videos/pixel.mp4 --mode pixelate
 ```
 
