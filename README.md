@@ -81,10 +81,6 @@ conda env create -f environment.yml
 
 # Activer l'environnement
 conda activate video-anonymization
-
-# 🆕 Installer les dépendances Virtual Try-On (optionnel)
-piInstaller les dépendances Virtual Try-On (optionnel)
-pip install torch torchvision scipy
 ```
 
 **Note**: Le fichier `environment.yml` installe automatiquement toutes les dépendances nécessaires (insightface, opencv, onnxruntime, etc.). Les packages PyTorch
