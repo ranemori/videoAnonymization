@@ -8,6 +8,9 @@ Ce projet est une **plateforme complète de traitement vidéo** utilisant le dee
 - **Lissage temporel**: Réduction du scintillement avec filtres temporels (moyenne glissante, exponentiel, Kalman)
 - **Analyse vidéo**: Comparaisons avant/après, histogrammes, cartes de différence
 
+Demonstration:
+https://github.com/user-attachments/assets/1c1f7d00-2a39-4c06-8652-87ee14c349fd
+
 ### Fonctionnalités principales
 
 #### Anonymisation
